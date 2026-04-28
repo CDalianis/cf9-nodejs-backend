@@ -1,5 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 declare global {
   namespace Express {
@@ -15,17 +18,18 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
   if (!header || !header.startsWith('Bearer ')) {
     return res.status(401).json({message: "Missing or invalid Authorization header"});
   }
-  // console.log(header);
+  // console.log("HEADER>>", header);
   const token = header.split(' ')[1];
-  // console.log(token);
+  // console.log("TOKEN>>", token);
 
   if (!token) {
     return res.status(401).json({message: "Invalid Authorization format"});
   }
 
   try {
+    // console.log("1>>>",token, JWT_SECRET)
     const payload = jwt.verify(token, JWT_SECRET);
-    // console.log(payload);
+    // console.log("1>>>>",payload);
     req.user = payload;
     // console.log("REQ USER>>>", req.user);
     next()
